@@ -1,5 +1,5 @@
 # Use a lightweight Python image
-FROM python:slim
+FROM python:3.11-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -11,8 +11,6 @@ WORKDIR /app
 # Install system dependencies required by PyArrow and other packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libgomp1 \
-    cmake \
-    build-essential \
     wget \
     curl \
     && apt-get clean \
@@ -24,10 +22,9 @@ RUN pip install --upgrade pip
 # Copy the application code
 COPY . .
 
-# Install Python dependencies
-RUN pip install pyarrow \
+# Install PyArrow with pre-built binary (no build required)
+RUN pip install --no-cache-dir pyarrow \
     && pip install --no-cache-dir -e .
-
 
 # Train the model before running the application
 RUN python pipeline/training_pipeline.py
