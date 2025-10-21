@@ -14,15 +14,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     cmake \
     build-essential \
     wget \
+    curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Python dependencies in editable mode
+RUN pip install --upgrade pip
 
 # Copy the application code
 COPY . .
 
-# Install Python dependencies in editable mode
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -e .
+# Install Python dependencies
+RUN pip install pyarrow \
+    && pip install --no-cache-dir -e .
+
 
 # Train the model before running the application
 RUN python pipeline/training_pipeline.py
