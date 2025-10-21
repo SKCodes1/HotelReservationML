@@ -1,26 +1,21 @@
-
-# Use the Jenkins image as the base image
+# Use the Jenkins LTS image as base
 FROM jenkins/jenkins:lts
 
-# Switch to root user to install dependencies
+# Switch to root to install dependencies
 USER root
 
-# Install prerequisites and Docker
+# Install Docker and prerequisites (without software-properties-common)
 RUN apt-get update -y && \
-    apt-get install -y apt-transport-https ca-certificates curl gnupg software-properties-common && \
-    curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - && \
-    echo "deb [arch=amd64] https://download.docker.com/linux/debian bullseye stable" > /etc/apt/sources.list.d/docker.list && \
-    apt-get update -y && \
-    apt-get install -y docker-ce docker-ce-cli containerd.io && \
+    apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release docker.io && \
     apt-get clean
 
-# Add Jenkins user to the Docker group (create if it doesn't exist)
+# Add Jenkins user to Docker group
 RUN groupadd -f docker && \
     usermod -aG docker jenkins
 
-# Create the Docker directory and volume for DinD
+# Create Docker directory for DinD
 RUN mkdir -p /var/lib/docker
 VOLUME /var/lib/docker
 
-# Switch back to the Jenkins user
+# Switch back to Jenkins user
 USER jenkins
