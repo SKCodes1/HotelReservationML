@@ -3,8 +3,8 @@ pipeline{
 
     environment {
         VENV_DIR = 'venv'
-        // GCP_PROJECT = "mlops-new-447207"
-        // GCLOUD_PATH = "/var/jenkins_home/google-cloud-sdk/bin"
+        GCP_PROJECT = "apt-momentum-355109"
+        GCLOUD_PATH = "/var/jenkins_home/google-cloud-sdk/bin"
     }
 
     stages{
@@ -31,30 +31,30 @@ pipeline{
             }
         }
 
-        // stage('Building and Pushing Docker Image to GCR'){
-        //     steps{
-        //         withCredentials([file(credentialsId: 'gcp-key' , variable : 'GOOGLE_APPLICATION_CREDENTIALS')]){
-        //             script{
-        //                 echo 'Building and Pushing Docker Image to GCR.............'
-        //                 sh '''
-        //                 export PATH=$PATH:${GCLOUD_PATH}
+        stage('Building and Pushing Docker Image to GCR'){
+            steps{
+                withCredentials([file(credentialsId: 'gcp-key' , variable : 'GOOGLE_APPLICATION_CREDENTIALS')]){
+                    script{
+                        echo 'Building and Pushing Docker Image to GCR.............'
+                        sh '''
+                        export PATH=$PATH:${GCLOUD_PATH}
 
 
-        //                 gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
+                        gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
 
-        //                 gcloud config set project ${GCP_PROJECT}
+                        gcloud config set project ${GCP_PROJECT}
 
-        //                 gcloud auth configure-docker --quiet
+                        gcloud auth configure-docker --quiet
 
-        //                 docker build -t gcr.io/${GCP_PROJECT}/ml-project:latest .
+                        docker build -t gcr.io/${GCP_PROJECT}/ml-project:latest .
 
-        //                 docker push gcr.io/${GCP_PROJECT}/ml-project:latest 
+                        docker push gcr.io/${GCP_PROJECT}/ml-project:latest 
 
-        //                 '''
-        //             }
-        //         }
-        //     }
-        // }
+                        '''
+                    }
+                }
+            }
+        }
 
 
         // stage('Deploy to Google Cloud Run'){
